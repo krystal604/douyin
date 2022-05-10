@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/RaymondCode/simple-demo/controller"
+	"douyin/controller"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,4 +29,6 @@ func initRouter(r *gin.Engine) {
 	apiRouter.POST("/relation/action/", controller.RelationAction)
 	apiRouter.GET("/relation/follow/list/", controller.FollowList)
 	apiRouter.GET("/relation/follower/list/", controller.FollowerList)
+
+	apiRouter.GET("/test", controller.Test)
 }
