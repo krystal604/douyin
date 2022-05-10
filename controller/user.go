@@ -2,8 +2,10 @@ package controller
 
 import (
 	"douyin/entity"
+	"douyin/errors_stuck"
 	"douyin/service"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -49,22 +51,35 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	//username := c.Query("username")
-	//password := c.Query("password")
+	username := c.Query("username")
+	password := c.Query("password")
 
-	//token := username + password
+	token := username + password
 
-	//if user, exist := usersLoginInfo[token]; exist {
-	//	c.JSON(http.StatusOK, UserLoginResponse{
-	//		Response: Response{StatusCode: 0},
-	//		UserId:   user.Id,
-	//		Token:    token,
-	//	})
-	//} else {
-	//	c.JSON(http.StatusOK, UserLoginResponse{
-	//		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-	//	})
-	//}
+	login, err := service.Login(username, password)
+	if err != nil {
+		if err == errors_stuck.PassWordWrongs {
+			c.JSON(http.StatusOK, UserLoginResponse{
+				Response: Response{StatusCode: 1, StatusMsg: "password is wrong"},
+			})
+		} else if err == errors_stuck.DoesNotExist {
+			c.JSON(http.StatusOK, UserLoginResponse{
+				Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+			})
+		} else {
+			log.Println(err)
+			return
+		}
+
+	}
+
+	if login {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 0},
+			Token:    token,
+		})
+	}
+
 }
 
 func UserInfo(c *gin.Context) {

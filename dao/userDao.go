@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"douyin/dao/dao_config"
 	"douyin/entity"
+	"douyin/errors_stuck"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -79,7 +80,7 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 	}
 
 	if query == nil || !query.Next() {
-		errs = dao_config.NilSelectError
+		errs = errors_stuck.DoesNotExist
 		return
 	}
 
