@@ -4,5 +4,5 @@ type User struct {
 	UserId       int
 	UserName     string
 	UserPassWord string
-	UserToken    int
+	UserToken    string
 }

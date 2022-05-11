@@ -4,6 +4,7 @@ import (
 	"douyin/entity"
 	"douyin/errors_stuck"
 	"douyin/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -27,26 +28,38 @@ type UserResponse struct {
 func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
-
-	register, err := service.Register(entity.User{
+	token := username + password
+	//
+	user := entity.User{
 		UserId:       0,
 		UserName:     username,
 		UserPassWord: password,
-		UserToken:    0,
-	})
+		UserToken:    token,
+	}
+	register, err := service.Register(user)
 
 	// 如果 失败
-	if !register && err != nil {
+	if !register || err != nil {
+		if err != nil {
+			if err == errors_stuck.DoesNotExist {
+				c.JSON(http.StatusOK, UserLoginResponse{
+					Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
+				})
+				return
+			}
+			log.Println(err)
+			return
+		}
 		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
+			Response: Response{StatusCode: 1, StatusMsg: "false"},
 		})
-	} else {
-
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Response{StatusCode: 0},
-			Token:    username + password,
-		})
+		return
 	}
+
+	c.JSON(http.StatusOK, UserLoginResponse{
+		Response: Response{StatusCode: 0},
+		Token:    username + password,
+	})
 
 }
 
@@ -70,29 +83,40 @@ func Login(c *gin.Context) {
 			log.Println(err)
 			return
 		}
-
 	}
-
 	if login {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
 			Token:    token,
 		})
 	}
-
 }
 
 func UserInfo(c *gin.Context) {
-	//token := c.Query("token")
-	//
-	//if user, exist := usersLoginInfo[token]; exist {
-	//	c.JSON(http.StatusOK, UserResponse{
-	//		Response: Response{StatusCode: 0},
-	//		User:     user,
-	//	})
-	//} else {
-	//	c.JSON(http.StatusOK, UserResponse{
-	//		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-	//	})
-	//}
+	token := c.Query("token")
+	byToken, err := service.GetUserByToken(token)
+
+	fmt.Println(byToken)
+	if err != nil {
+		if err == errors_stuck.DoesNotExist {
+			c.JSON(http.StatusOK, UserResponse{
+				Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+			})
+			return
+		} else {
+			log.Println(err)
+			return
+		}
+	}
+	c.JSON(http.StatusOK, UserResponse{
+		Response: Response{StatusCode: 0},
+		User: User{
+			Id:            int64(byToken.UserId),
+			Name:          byToken.UserName,
+			FollowCount:   0,
+			FollowerCount: 0,
+			IsFollow:      false,
+		},
+	})
+
 }

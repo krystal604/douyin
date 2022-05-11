@@ -70,11 +70,50 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 		err := prepare.Close()
 		if err != nil {
 			log.Println(err)
-
+			log.Println("dao")
 		}
 	}(prepare)
 
 	query, err := prepare.Query(name)
+	if err != nil {
+		log.Println(err)
+	}
+
+	//flag := false // judge is run once
+
+	for query.Next() {
+		err := query.Scan(&ans.UserId, &ans.UserName, &ans.UserPassWord, &ans.UserToken)
+		if err != nil {
+			log.Println(err)
+			log.Println("dao")
+		}
+
+	}
+
+	// 没有任何数据返回DoesNotExist异常
+	//if !flag {
+	//	errs = errors_stuck.DoesNotExist
+	//	return
+	//}
+	return
+}
+
+func SelectUserByToken(token string) (ans entity.User, errs error) {
+	db := dao_config.GetDatabase()
+	sqlStr := "select * from user where user_token = ? "
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(token)
 	if err != nil {
 		log.Println(err)
 	}
@@ -84,10 +123,15 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 		return
 	}
 
-	for query.Next() {
-		err := query.Scan(&ans.UserName, &ans.UserName, &ans.UserPassWord, &ans.UserToken)
+	for {
+		err := query.Scan(&ans.UserId, &ans.UserName, &ans.UserPassWord, &ans.UserToken)
+
 		if err != nil {
 			log.Println(err)
+		}
+
+		if !query.Next() {
+			break
 		}
 	}
 	return
@@ -99,7 +143,7 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 */
 func ExistUserName(name string) bool {
 	db := dao_config.GetDatabase()
-	sqlStr := "SELECT count(*) FROM user WHERE name = ?"
+	sqlStr := "SELECT count(*) FROM user WHERE user_name = ?"
 	prepare, err := db.Prepare(sqlStr)
 	if err != nil {
 		log.Println()
