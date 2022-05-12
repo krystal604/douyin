@@ -79,10 +79,12 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 		log.Println(err)
 	}
 
-	//flag := false // judge is run once
+	flag := false // judge is run once
 
 	for query.Next() {
+		flag = true
 		err := query.Scan(&ans.UserId, &ans.UserName, &ans.UserPassWord, &ans.UserToken)
+
 		if err != nil {
 			log.Println(err)
 			log.Println("dao")
@@ -91,10 +93,10 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 	}
 
 	// 没有任何数据返回DoesNotExist异常
-	//if !flag {
-	//	errs = errors_stuck.DoesNotExist
-	//	return
-	//}
+	if !flag {
+		errs = errors_stuck.DoesNotExist
+		return
+	}
 	return
 }
 
@@ -118,21 +120,19 @@ func SelectUserByToken(token string) (ans entity.User, errs error) {
 		log.Println(err)
 	}
 
-	if query == nil || !query.Next() {
-		errs = errors_stuck.DoesNotExist
-		return
-	}
-
-	for {
+	flag := false
+	for query.Next() {
+		flag = true
 		err := query.Scan(&ans.UserId, &ans.UserName, &ans.UserPassWord, &ans.UserToken)
 
 		if err != nil {
 			log.Println(err)
 		}
 
-		if !query.Next() {
-			break
-		}
+	}
+	//如果没有进入循环 则没有查询到数据
+	if !flag {
+		errs = errors_stuck.DoesNotExist
 	}
 	return
 }
