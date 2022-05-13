@@ -1,13 +1,14 @@
 package main
 
 import (
+	"douyin/router"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
 
-	initRouter(r)
+	router.InitRouter(r)
 
 	err := r.Run()
 	if err != nil {
