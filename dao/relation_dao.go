@@ -94,3 +94,39 @@ func CancelRelation(id int) (ans bool, err error) {
 	}
 	return true, err
 }
+
+func SelectFollowList(id int) (idList []int, err error) {
+	//idList 切片初始化
+	idList = make([]int, 0)
+
+	db := dao_config.GetDatabase()
+	sqlStr := "select user_fans_id from fllow where user_id = ? "
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+		return nil, err
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(id)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for query.Next() {
+		var temp int
+		err := query.Scan(&temp)
+		if err != nil {
+			return nil, err
+		}
+		idList = append(idList, temp)
+	}
+
+	return idList, err
+}

@@ -15,7 +15,7 @@ import (
 //	SelectUserById(id int)
 //}
 
-func SelectUserById(id int) (ans entity.User) {
+func SelectUserById(id int) (ans entity.UserDao) {
 	db := dao_config.GetDatabase()
 	query, err := db.Query("select * from user where user_id = " + strconv.Itoa(id) + ";")
 	if err != nil {
@@ -32,7 +32,7 @@ func SelectUserById(id int) (ans entity.User) {
 	return
 }
 
-func InsertUser(user entity.User) (ans bool) {
+func InsertUser(user entity.UserDao) (ans bool) {
 	db := dao_config.GetDatabase()
 	sqlStr := "insert into user(user_id , user_name , user_password , user_token ) values (?,?,?,?)"
 	prepare, err := db.Prepare(sqlStr)
@@ -59,7 +59,7 @@ func InsertUser(user entity.User) (ans bool) {
 	return true
 }
 
-func SelectUserByName(name string) (ans entity.User, errs error) {
+func SelectUserByName(name string) (ans entity.UserDao, errs error) {
 	db := dao_config.GetDatabase()
 	sqlStr := "select * from user where user_name = ? "
 	prepare, err := db.Prepare(sqlStr)
@@ -100,7 +100,7 @@ func SelectUserByName(name string) (ans entity.User, errs error) {
 	return
 }
 
-func SelectUserByToken(token string) (ans entity.User, errs error) {
+func SelectUserByToken(token string) (ans entity.UserDao, errs error) {
 	db := dao_config.GetDatabase()
 	sqlStr := "select * from user where user_token = ? "
 	prepare, err := db.Prepare(sqlStr)

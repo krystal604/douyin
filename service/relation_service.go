@@ -2,6 +2,7 @@ package service
 
 import (
 	"douyin/dao"
+	"douyin/entity"
 	"douyin/entity/request_entity"
 	"douyin/errors_stuck"
 	"log"
@@ -34,4 +35,30 @@ func RelationActionCancel(request request_entity.RelationActionRequest) (ans boo
 	}
 
 	return relation, nil
+}
+
+func GetFollowList(id int) (userList []entity.User, err error) {
+	//先查询followUserList 以便确认 返回切片长度
+	followUserList, err := dao.SelectFollowList(id)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	//followUserList 初始化
+	userList = make([]entity.User, len(followUserList))
+
+	for i := 0; i < len(followUserList); i++ {
+		user := dao.SelectUserById(followUserList[i])
+
+		userList = append(userList, entity.User{
+			Id:            int64(user.UserId),
+			Name:          user.UserName,
+			FollowCount:   0,
+			FollowerCount: 0,
+			IsFollow:      false,
+		})
+	}
+
+	return
 }

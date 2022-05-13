@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"douyin/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type CommentListResponse struct {
 	Response
-	CommentList []Comment `json:"comment_list,omitempty"`
+	CommentList []entity.Comment `json:"comment_list,omitempty"`
 }
 
 // CommentAction no practical effect, just check if token is valid

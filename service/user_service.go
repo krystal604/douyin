@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func Register(user entity.User) (bool, error) {
+func Register(user entity.UserDao) (bool, error) {
 
 	exist := dao.ExistUserName(user.UserName)
 	if !exist {
@@ -32,12 +32,12 @@ func Login(userName string, userPassword string) (bool, error) {
 	}
 }
 
-func GetUserByToken(token string) (entity.User, error) {
+func GetUserByToken(token string) (entity.UserDao, error) {
 
 	user, err := dao.SelectUserByToken(token)
 	if err != nil {
 		if err == errors_stuck.DoesNotExist {
-			return entity.User{}, err
+			return entity.UserDao{}, err
 		} else {
 			log.Println(err)
 		}

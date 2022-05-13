@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"douyin/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type VideoListResponse struct {
 	Response
-	VideoList []Video `json:"video_list"`
+	VideoList []entity.Video `json:"video_list"`
 }
 
 // Publish check token then save upload file to public directory

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"douyin/entity"
 	"douyin/entity/request_entity"
 	"douyin/errors_stuck"
 	"douyin/service"
@@ -12,18 +13,11 @@ import (
 
 type UserListResponse struct {
 	Response
-	UserList []User `json:"user_list"`
+	UserList []entity.User `json:"user_list"`
 }
 
 // RelationAction no practical effect, just check if token is valid
 func RelationAction(c *gin.Context) {
-	//token := c.Query("token")
-	//
-	//if _, exist := usersLoginInfo[token]; exist {
-	//	c.JSON(http.StatusOK, Response{StatusCode: 0})
-	//} else {
-	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	//}
 
 	userId := c.PostForm("user_id")
 	token := c.PostForm("token")
@@ -107,20 +101,35 @@ func RelationAction(c *gin.Context) {
 
 // FollowList all users have same follow list
 func FollowList(c *gin.Context) {
+
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: []entity.User{DemoUser},
 	})
 }
 
 // FollowerList all users have same follower list
 func FollowerList(c *gin.Context) {
+	userId := c.Query("user_id")
+
+	userIdAtoi, err := strconv.Atoi(userId)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	list, err := service.GetFollowList(userIdAtoi)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: list,
 	})
+
 }

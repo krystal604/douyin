@@ -22,7 +22,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User User `json:"user"`
+	User entity.User `json:"user"`
 }
 
 func Register(c *gin.Context) {
@@ -30,7 +30,7 @@ func Register(c *gin.Context) {
 	password := c.Query("password")
 	token := username + password
 	//
-	user := entity.User{
+	user := entity.UserDao{
 		UserId:       0,
 		UserName:     username,
 		UserPassWord: password,
@@ -110,7 +110,7 @@ func UserInfo(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0},
-		User: User{
+		User: entity.User{
 			Id:            int64(byToken.UserId),
 			Name:          byToken.UserName,
 			FollowCount:   0,
