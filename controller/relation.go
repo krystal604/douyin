@@ -112,8 +112,8 @@ func FollowList(c *gin.Context) {
 
 // FollowerList all users have same follower list
 func FollowerList(c *gin.Context) {
-	userId := c.Query("user_id")
 
+	userId := c.Query("user_id")
 	userIdAtoi, err := strconv.Atoi(userId)
 	if err != nil {
 		log.Println(err)

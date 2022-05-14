@@ -130,3 +130,60 @@ func SelectFollowList(id int) (idList []int, err error) {
 
 	return idList, err
 }
+func CountFans(id int) (count int, err error) {
+	db := dao_config.GetDatabase()
+
+	//粉丝有多少就查主用户次数 即被关注多少次
+
+	sqlStr := "SELECT count(*) FROM fllow WHERE user_id = ?"
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(id)
+
+	for query.Next() {
+		err := query.Scan(&count)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return
+}
+
+func CountFollow(id int) (count int, err error) {
+	db := dao_config.GetDatabase()
+
+	//关注多少人就是多少人的粉丝
+
+	sqlStr := "SELECT count(*) FROM fllow WHERE user_fans_id = ?"
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(id)
+
+	for query.Next() {
+		err := query.Scan(&count)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return
+}
