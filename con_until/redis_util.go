@@ -1,4 +1,4 @@
-package controller_until
+package con_until
 
 import (
 	"douyin/dao"
@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"log"
+	"strconv"
 )
 
 func GetFollowAndFollower(user entity.UserDao) (follow int, follower int) {
@@ -15,7 +16,7 @@ func GetFollowAndFollower(user entity.UserDao) (follow int, follower int) {
 	defer redis_util.CloseConnection(connection)
 
 	//检查是否存在key值
-	exists, err := redis.Bool(connection.Do("EXISTS", user.UserName+"_FollowCount"))
+	exists, err := redis.Bool(connection.Do("EXISTS", strconv.Itoa(user.UserId)+"_FollowCount"))
 
 	if err != nil {
 		log.Println(err)
@@ -26,14 +27,14 @@ func GetFollowAndFollower(user entity.UserDao) (follow int, follower int) {
 
 	if exists {
 		//获取关注及被关注人数
-		v1, err := redis.Int(connection.Do("GET", user.UserName+"_FollowCount"))
+		v1, err := redis.Int(connection.Do("GET", strconv.Itoa(user.UserId)+"_FollowCount"))
 		followerCount = v1
 
 		if err != nil {
 			log.Println(err)
 		}
 
-		v2, err := redis.Int(connection.Do("GET", user.UserName+"_FollowerCount"))
+		v2, err := redis.Int(connection.Do("GET", strconv.Itoa(user.UserId)+"_FollowerCount"))
 		followerCount = v2
 
 		if err != nil {

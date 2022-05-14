@@ -96,6 +96,10 @@ func CancelRelation(id int) (ans bool, err error) {
 }
 
 func SelectFollowList(id int) (idList []int, err error) {
+	// 利用redis 确定切片初始化容量 以提升效率 减少扩容开销
+	//var conUtil con_until.ConUtil
+	//follow, _ := conUtil.GetFollowAndFollower(entity.UserDao{UserId: id})
+
 	//idList 切片初始化
 	idList = make([]int, 0)
 

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"douyin/controller/controller_until"
+	"douyin/con_until"
 	"douyin/entity"
 	"douyin/errors_stuck"
 	"douyin/service"
@@ -110,8 +110,7 @@ func UserInfo(c *gin.Context) {
 		}
 	}
 
-	// 利用redis 查询countFollow
-	followCount, followerCount := controller_until.GetFollowAndFollower(byToken)
+	followCount, followerCount := con_until.GetFollowAndFollower(byToken)
 
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0},
