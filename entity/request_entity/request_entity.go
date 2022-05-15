@@ -6,3 +6,10 @@ type RelationActionRequest struct {
 	ToUserId   int
 	ActionType string
 }
+
+type Video struct {
+	UserId     int
+	Token      string
+	VideoId    int
+	ActionType int
+}

@@ -30,3 +30,10 @@ type UserDao struct {
 	UserPassWord string
 	UserToken    string
 }
+
+type VideoDao struct {
+	Id            int
+	PlayUrl       string
+	CoverUrl      string
+	FavoriteCount int
+}
