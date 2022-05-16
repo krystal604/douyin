@@ -10,14 +10,16 @@ import (
 
 type FeedResponse struct {
 	Response
-	VideoList []entity.Video `json:"video_list,omitempty"`
-	NextTime  int64          `json:"next_time,omitempty"`
+	VideoList []entity.Video `json:"video_list"`
+	NextTime  int64          `json:"next_time"`
 }
 
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
 
-	feed, err := service.GetVideoFeed()
+	token := c.Query("token")
+
+	feed, err := service.GetVideoFeed(token)
 	if err != nil {
 		return
 	}

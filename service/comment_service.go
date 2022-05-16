@@ -9,6 +9,10 @@ import (
 
 func CommentAction(comment request_entity.Comment) error {
 
+	if comment.UserId == 0 {
+		comment.UserId = dao.SelectUserIdByToken(comment.Token)
+	}
+
 	if comment.ActionType == 1 {
 		dao.InsertComment(entity.CommentDao{
 			Id:          comment.ContentId,
@@ -26,6 +30,7 @@ func CommentAction(comment request_entity.Comment) error {
 }
 
 func GetCommentList(id int) (ans []entity.Comment) {
+
 	commentList := dao.SelectCommentListByVideoId(id)
 	ans = make([]entity.Comment, len(commentList))
 

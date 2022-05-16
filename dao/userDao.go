@@ -172,3 +172,31 @@ func ExistUserName(name string) bool {
 
 	return false
 }
+
+func SelectUserIdByToken(token string) (ans int) {
+	db := dao_config.GetDatabase()
+	sqlStr := "SELECT user_id FROM user WHERE user_token = ?"
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(token)
+	if err != nil {
+		log.Println(err)
+	}
+	for query.Next() {
+		err := query.Scan(&ans)
+		if err != nil {
+			return 0
+		}
+	}
+	return
+}

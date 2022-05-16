@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func GetVideoFeed() (ans []entity.Video, err error) {
+func GetVideoFeed(token string) (ans []entity.Video, err error) {
 	videoList := dao.GetAllVideo()
 
 	ans = make([]entity.Video, len(videoList))
@@ -22,9 +22,8 @@ func GetVideoFeed() (ans []entity.Video, err error) {
 	group := sync.WaitGroup{}
 	mutex := sync.Mutex{}
 	// 并发查询函数
-	var goGetVideo func(video *entity.VideoDao)
-	goGetVideo = func(video *entity.VideoDao) {
-
+	var goGetVideo func(video entity.VideoDao)
+	goGetVideo = func(video entity.VideoDao) {
 		author := GetUser(video.Author)
 		temp := entity.Video{
 			Id:            int64(video.Id),
@@ -33,18 +32,21 @@ func GetVideoFeed() (ans []entity.Video, err error) {
 			CoverUrl:      video.CoverUrl,
 			FavoriteCount: int64(dao.CountVideoFavoriteByVideoId(video.Id)),
 			CommentCount:  int64(dao.CountVideoCommentByVideoId(video.Id)),
-			IsFavorite:    false, // 由于未登录 默认认为为点赞
+			IsFavorite:    IsFavoriteByToken(token, video.Id), // 由于未登录 默认认为为点赞
 		}
 
 		ch <- temp
-		group.Done()
 
+		//mutex.Lock()
+		//ans = append(ans , temp)
+		//mutex.Unlock()
+		group.Done()
 	}
 
 	for _, video := range videoList {
 		//log.Println(runtime.NumGoroutine())
 		group.Add(1)
-		go goGetVideo(&video)
+		go goGetVideo(video)
 	}
 
 	var add func()
@@ -52,22 +54,24 @@ func GetVideoFeed() (ans []entity.Video, err error) {
 		mutex.Lock()
 		temp := <-ch
 		ans = append(ans, temp)
-		ch <- temp
 		mutex.Unlock()
+		group.Done()
 	}
-
+	group.Wait()
 	for i := 0; i < len(videoList); i++ {
+		group.Add(1)
 		go add()
 	}
 
 	group.Wait()
+
 	return
 }
 
 func GetPublishVideoList(id int) (ans []entity.Video, err error) {
 	ans = make([]entity.Video, 0)
 
-	feed, err := GetVideoFeed()
+	feed, err := GetVideoFeed("")
 	if err != nil {
 		log.Println(err)
 	}

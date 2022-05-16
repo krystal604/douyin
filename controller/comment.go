@@ -26,12 +26,19 @@ func CommentAction(c *gin.Context) {
 	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	//}
 
-	userId := c.PostForm("user_id")
-	token := c.PostForm("token")
-	videoId := c.PostForm("video_id")
-	actionType := c.PostForm("action_type")
-	commentText := c.PostForm("comment_text")
-	commentId := c.PostForm("comment_id")
+	//userId := c.PostForm("user_id")
+	//token := c.PostForm("token")
+	//videoId := c.PostForm("video_id")
+	//actionType := c.PostForm("action_type")
+	//commentText := c.PostForm("comment_text")
+	//commentId := c.PostForm("comment_id")
+
+	userId := c.Query("user_id")
+	token := c.Query("token")
+	videoId := c.Query("video_id")
+	actionType := c.Query("action_type")
+	commentText := c.Query("comment_text")
+	commentId := c.Query("comment_id")
 
 	userIdAtoi, err := strconv.Atoi(userId)
 	videoIdAtoi, err := strconv.Atoi(videoId)

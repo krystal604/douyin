@@ -87,10 +87,61 @@ func CancelFavoriteByUserIdAAndFeedID(userId int, feedId int) {
 	}
 }
 
-func CountVideoFavoriteByVideoId(id int) int {
-	return 0
+func CountVideoFavoriteByVideoId(id int) (ans int) {
+	db := dao_config.GetDatabase()
+	sqlStr := "SELECT count(*) FROM favorite_list WHERE feed_id = ? group by feed_id"
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(id)
+	if err != nil {
+		return 0
+	}
+	for query.Next() {
+		err := query.Scan(&ans)
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}
+
+	return
 }
 
 func IsFavorite(userId int, videoId int) bool {
-	return false
+	db := dao_config.GetDatabase()
+	sqlStr := "SELECT count(*) FROM favorite_list WHERE user_id = ? and feed_id = ?"
+	prepare, err := db.Prepare(sqlStr)
+	if err != nil {
+		log.Println()
+	}
+	defer func(prepare *sql.Stmt) {
+		err := prepare.Close()
+		if err != nil {
+			log.Println(err)
+
+		}
+	}(prepare)
+
+	query, err := prepare.Query(userId, videoId)
+	if err != nil {
+		return false
+	}
+
+	flag := false
+	for query.Next() {
+		flag = true
+	}
+
+	return flag
 }

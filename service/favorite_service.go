@@ -47,3 +47,11 @@ func FavoriteAction(video request_entity.Video) (ans bool, err error) {
 
 	return true, nil
 }
+
+func IsFavoriteByToken(token string, videoId int) bool {
+	if token == "" {
+		return false
+	}
+	id := dao.SelectUserIdByToken(token)
+	return dao.IsFavorite(id, videoId)
+}

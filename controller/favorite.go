@@ -19,10 +19,15 @@ func FavoriteAction(c *gin.Context) {
 	//} else {
 	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	//}
-	userId := c.PostForm("user_id")
-	token := c.PostForm("token")
-	videoId := c.PostForm("video_id")
-	actionType := c.PostForm("action_type")
+	//userId := c.PostForm("user_id")
+	//token := c.PostForm("token")
+	//videoId := c.PostForm("video_id")
+	//actionType := c.PostForm("action_type")
+
+	userId := c.Query("user_id")
+	token := c.Query("token")
+	videoId := c.Query("video_id")
+	actionType := c.Query("action_type")
 
 	userIdAtoi, err := strconv.Atoi(userId)
 	videoIdAtoi, err := strconv.Atoi(videoId)
