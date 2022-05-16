@@ -2,8 +2,11 @@ package controller
 
 import (
 	"douyin/entity"
+	"douyin/service"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
+	"strconv"
 )
 
 type VideoListResponse struct {
@@ -49,10 +52,23 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+	userId := c.Query("user_id")
+
+	userIdAtoi, err := strconv.Atoi(userId)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	list, err := service.GetPublishVideoList(userIdAtoi)
+	if err != nil {
+		return
+	}
+
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		VideoList: DemoVideos,
+		VideoList: list,
 	})
 }

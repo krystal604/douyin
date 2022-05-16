@@ -22,9 +22,18 @@ func Feed(c *gin.Context) {
 		return
 	}
 
+	index := 0
+	for _, video := range feed {
+		if video.Id == 0 {
+			index++
+		} else {
+			break
+		}
+	}
+
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
-		VideoList: feed[1:],
+		VideoList: feed[index:],
 		NextTime:  time.Now().Unix(),
 	})
 

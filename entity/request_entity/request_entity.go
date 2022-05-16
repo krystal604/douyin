@@ -13,3 +13,12 @@ type Video struct {
 	VideoId    int
 	ActionType int
 }
+
+type Comment struct {
+	UserId      int
+	Token       string
+	VideoId     int
+	ActionType  int
+	ContentText string
+	ContentId   int
+}

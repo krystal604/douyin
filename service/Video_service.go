@@ -3,6 +3,7 @@ package service
 import (
 	"douyin/dao"
 	"douyin/entity"
+	"log"
 	"sync"
 )
 
@@ -60,5 +61,21 @@ func GetVideoFeed() (ans []entity.Video, err error) {
 	}
 
 	group.Wait()
+	return
+}
+
+func GetPublishVideoList(id int) (ans []entity.Video, err error) {
+	ans = make([]entity.Video, 0)
+
+	feed, err := GetVideoFeed()
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, video := range feed {
+		if video.Author.Id == int64(id) {
+			ans = append(ans, video)
+		}
+	}
 	return
 }

@@ -38,3 +38,10 @@ type VideoDao struct {
 	FavoriteCount int
 	Author        int
 }
+
+type CommentDao struct {
+	Id          int
+	UserId      int
+	VideoId     int
+	ContentText string
+}
