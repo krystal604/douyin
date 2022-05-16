@@ -36,4 +36,5 @@ type VideoDao struct {
 	PlayUrl       string
 	CoverUrl      string
 	FavoriteCount int
+	Author        int
 }

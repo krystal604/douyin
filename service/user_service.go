@@ -44,3 +44,16 @@ func GetUserByToken(token string) (entity.UserDao, error) {
 	}
 	return user, nil
 }
+
+func GetUser(id int) entity.User {
+	byId := dao.SelectUserById(id)
+
+	user := entity.User{
+		Id:            int64(byId.UserId),
+		Name:          byId.UserName,
+		FollowCount:   0,
+		FollowerCount: 0,
+		IsFollow:      false,
+	}
+	return user
+}

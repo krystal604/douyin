@@ -45,7 +45,7 @@ func SelectFavoriteVideoIdListByUserId(id int) (ans []int, err error) {
 
 func InsertFavorite(userId int, feedId int) {
 	db := dao_config.GetDatabase()
-	sqlStr := "insert into favorite_list(favorite_id , user_id , feed_id ) values (?,?,?)"
+	sqlStr := "insert into favorite_list(user_id , feed_id ) values (?,?)"
 	prepare, err := db.Prepare(sqlStr)
 	if err != nil {
 		log.Println()
@@ -57,7 +57,7 @@ func InsertFavorite(userId int, feedId int) {
 		}
 	}(prepare)
 
-	_, err = prepare.Exec(dao_config.AUTO_ID, userId, feedId)
+	_, err = prepare.Exec(userId, feedId)
 	if err != nil {
 		log.Println(err)
 		return
@@ -85,4 +85,12 @@ func CancelFavoriteByUserIdAAndFeedID(userId int, feedId int) {
 		log.Println(err)
 		return
 	}
+}
+
+func CountVideoFavoriteByVideoId(id int) int {
+	return 0
+}
+
+func IsFavorite(userId int, videoId int) bool {
+	return false
 }
